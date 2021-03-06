@@ -22,7 +22,7 @@ spec:
 status:
   loadBalancer: {}
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -32,6 +32,9 @@ metadata:
   name: turbine-stream-service
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: turbine-stream-service
   strategy:
     type: RollingUpdate
   template:
@@ -48,11 +51,16 @@ spec:
             secretKeyRef:
               name: piggymetrics
               key: config_service_password
-        image: afermon/piggymetrics-turbine-stream-service
+        image: sqshq/piggymetrics-turbine-stream-service
         name: turbine-stream-service
         ports:
         - containerPort: 8989
         - containerPort: 8080
         resources: {}
       restartPolicy: Always
+      tolerations:
+        - key: "kubernetes.azure.com/scalesetpriority"
+          operator: "Equal"
+          value: "spot"
+          effect: "NoSchedule"
 status: {}

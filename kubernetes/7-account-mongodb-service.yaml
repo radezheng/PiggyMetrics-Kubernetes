@@ -17,7 +17,7 @@ spec:
     tier: database
     app: account-mongodb
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: account-mongodb
@@ -27,6 +27,9 @@ metadata:
     app: account-mongodb
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: account-mongodb
   strategy:
     type: Recreate
   template:
@@ -48,5 +51,10 @@ spec:
               key: account_mongodb_password
         ports:
           - containerPort: 27017
-        image: afermon/piggymetrics-mongodb
+        image: sqshq/piggymetrics-mongodb
       restartPolicy: Always
+      tolerations:
+        - key: "kubernetes.azure.com/scalesetpriority"
+          operator: "Equal"
+          value: "spot"
+          effect: "NoSchedule"

@@ -63,8 +63,4 @@ spec:
         image: sqshq/piggymetrics-account-service
         name: account-service
       restartPolicy: Always
-      tolerations:
-        - key: "kubernetes.azure.com/scalesetpriority"
-          operator: "Equal"
-          value: "spot"
-          effect: "NoSchedule"
+     

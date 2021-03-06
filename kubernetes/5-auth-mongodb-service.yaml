@@ -17,7 +17,7 @@ spec:
     tier: database
     app: auth-mongodb
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: auth-mongodb
@@ -27,6 +27,9 @@ metadata:
     app: auth-mongodb
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: auth-mongodb
   strategy:
     type: Recreate
   template:
@@ -37,7 +40,7 @@ spec:
         app: auth-mongodb
     spec:
       containers:
-      - image: afermon/piggymetrics-mongodb
+      - image: sqshq/piggymetrics-mongodb
         name: auth-mongodb
         env:
           - name: MONGODB_PASSWORD
@@ -49,4 +52,9 @@ spec:
           - containerPort: 27017
         resources: {}
       restartPolicy: Always
+      tolerations:
+        - key: "kubernetes.azure.com/scalesetpriority"
+          operator: "Equal"
+          value: "spot"
+          effect: "NoSchedule"
 status: {}

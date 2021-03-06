@@ -19,7 +19,7 @@ spec:
 status:
   loadBalancer: {}
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -29,6 +29,9 @@ metadata:
   name: notification-service
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
   strategy: 
     type: RollingUpdate
   template:
@@ -77,8 +80,13 @@ spec:
               key: notification_email_pass
         ports:
           - containerPort: 8000
-        image: afermon/piggymetrics-notification-service
+        image: sqshq/piggymetrics-notification-service
         name: notification-service
         resources: {}
+      tolerations:
+        - key: "kubernetes.azure.com/scalesetpriority"
+          operator: "Equal"
+          value: "spot"
+          effect: "NoSchedule"
       restartPolicy: Always
 status: {}

@@ -9,10 +9,10 @@ metadata:
   name: gateway
 spec:
   # comment or delete the following line if you want to use a LoadBalancer
-  type: NodePort 
+  # type: NodePort 
   # if your cluster supports it, uncomment the following to automatically create
   # an external load-balanced IP for the frontend service.
-  # type: LoadBalancer
+  type: LoadBalancer
   ports:
   - name: http
     port: 80
@@ -24,7 +24,7 @@ spec:
     tier: frontend
     app: gateway
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: gateway
@@ -34,6 +34,9 @@ metadata:
     app: gateway
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
   strategy:
     type: RollingUpdate
   template:
@@ -52,8 +55,13 @@ spec:
             secretKeyRef:
               name: piggymetrics
               key: config_service_password
-        image: afermon/piggymetrics-gateway
+        image: sqshq/piggymetrics-gateway
         
         ports:
         - containerPort: 4000
       restartPolicy: Always
+      tolerations:
+        - key: "kubernetes.azure.com/scalesetpriority"
+          operator: "Equal"
+          value: "spot"
+          effect: "NoSchedule"

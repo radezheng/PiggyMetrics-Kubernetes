@@ -19,7 +19,7 @@ spec:
 status:
   loadBalancer: {}
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -29,6 +29,9 @@ metadata:
   name: auth-service
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
   strategy: 
     type: RollingUpdate
   template:
@@ -65,10 +68,15 @@ spec:
             secretKeyRef:
               name: piggymetrics
               key: statistics_service_password
-        image: afermon/piggymetrics-auth-service
+        image: sqshq/piggymetrics-auth-service
         name: auth-service
         ports:
           - containerPort: 5000
         resources: {}
       restartPolicy: Always
+      tolerations:
+        - key: "kubernetes.azure.com/scalesetpriority"
+          operator: "Equal"
+          value: "spot"
+          effect: "NoSchedule"
 status: {}

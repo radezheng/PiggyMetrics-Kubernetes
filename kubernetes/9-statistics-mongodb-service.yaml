@@ -17,7 +17,7 @@ spec:
     tier: database
     app: statistics-mongodb
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -27,6 +27,9 @@ metadata:
   name: statistics-mongodb
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: statistics-mongodb
   strategy:
     type: Recreate
   template:
@@ -45,8 +48,13 @@ spec:
               key: statistics_mongodb_password
         ports:
           - containerPort: 27017
-        image: afermon/piggymetrics-mongodb
+        image: sqshq/piggymetrics-mongodb
         name: statistics-mongodb
         resources: {}
       restartPolicy: Always
+      tolerations:
+        - key: "kubernetes.azure.com/scalesetpriority"
+          operator: "Equal"
+          value: "spot"
+          effect: "NoSchedule"
 status: {}

@@ -22,7 +22,7 @@ spec:
 status:
   loadBalancer: {}
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
@@ -32,6 +32,9 @@ metadata:
   name: rabbitmq
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
   strategy:
     type: RollingUpdate
   template:
@@ -49,4 +52,9 @@ spec:
         - containerPort: 5672
         resources: {}
       restartPolicy: Always
+      tolerations:
+        - key: "kubernetes.azure.com/scalesetpriority"
+          operator: "Equal"
+          value: "spot"
+          effect: "NoSchedule"
 status: {}
