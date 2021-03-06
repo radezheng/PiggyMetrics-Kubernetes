@@ -1,7 +1,7 @@
 
 [![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/afermon/PiggyMetrics-Kubernetes/blob/master/LICENCE)
 
-# Piggy Metrics (Kubernetes)
+# Piggy Metrics (Kubernetes)  -- Modified to run on AKS Spot Nodepool
 
 **A simple way to deal with personal finances**
 
